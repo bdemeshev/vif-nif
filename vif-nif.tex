@@ -1,0 +1,217 @@
+% arara: xelatex
+\documentclass[12pt]{article}
+
+% \usepackage{physics}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+\usepackage{tikzducks}
+
+\usepackage{tikz} % картинки в tikz
+\usetikzlibrary{shapes, arrows, positioning}
+\usepackage{microtype} % свешивание пунктуации
+
+\usepackage{array} % для столбцов фиксированной ширины
+
+\usepackage{indentfirst} % отступ в первом параграфе
+
+\usepackage{sectsty} % для центрирования названий частей
+\allsectionsfont{\centering}
+
+\usepackage{amsmath, amsfonts, amssymb} % куча стандартных математических плюшек
+
+\usepackage{comment}
+
+\usepackage[top=2cm, left=1.2cm, right=1.2cm, bottom=2cm]{geometry} % размер текста на странице
+
+\usepackage{lastpage} % чтобы узнать номер последней страницы
+
+\usepackage{enumitem} % дополнительные плюшки для списков
+%  например \begin{enumerate}[resume] позволяет продолжить нумерацию в новом списке
+\usepackage{caption}
+
+\usepackage{url} % to use \url{link to web}
+
+
+\newcommand{\smallduck}{\begin{tikzpicture}[scale=0.3]
+    \duck[
+        cape=black,
+        hat=black,
+        mask=black
+    ]
+    \end{tikzpicture}}
+
+\usepackage{fancyhdr} % весёлые колонтитулы
+\pagestyle{fancy}
+\lhead{}
+\chead{Виф-ниф, ваф-наф, вуф-нуф и матрица-мать всех регрессий}
+\rhead{}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\usepackage{tcolorbox} % рамочки!
+
+\usepackage{todonotes} % для вставки в документ заметок о том, что осталось сделать
+% \todo{Здесь надо коэффициенты исправить}
+% \missingfigure{Здесь будет Последний день Помпеи}
+% \listoftodos - печатает все поставленные \todo'шки
+
+
+% более красивые таблицы
+\usepackage{booktabs}
+% заповеди из докупентации:
+% 1. Не используйте вертикальные линни
+% 2. Не используйте двойные линии
+% 3. Единицы измерения - в шапку таблицы
+% 4. Не сокращайте .1 вместо 0.1
+% 5. Повторяющееся значение повторяйте, а не говорите "то же"
+
+
+\setcounter{MaxMatrixCols}{20}
+% by crazy default pmatrix supports only 10 cols :)
+
+
+\usepackage{fontspec}
+\usepackage{libertine}
+\usepackage{polyglossia}
+
+\setmainlanguage{russian}
+\setotherlanguages{english}
+
+% download "Linux Libertine" fonts:
+% http://www.linuxlibertine.org/index.php?id=91&L=1
+% \setmainfont{Linux Libertine O} % or Helvetica, Arial, Cambria
+% why do we need \newfontfamily:
+% http://tex.stackexchange.com/questions/91507/
+% \newfontfamily{\cyrillicfonttt}{Linux Libertine O}
+
+\AddEnumerateCounter{\asbuk}{\russian@alph}{щ} % для списков с русскими буквами
+% \setlist[enumerate, 2]{label=\asbuk*),ref=\asbuk*}
+
+%% эконометрические сокращения
+\DeclareMathOperator{\Cov}{\mathbb{C}ov}
+\DeclareMathOperator{\Corr}{\mathbb{C}orr}
+\DeclareMathOperator{\Var}{\mathbb{V}ar}
+\DeclareMathOperator{\col}{col}
+\DeclareMathOperator{\row}{row}
+
+\let\P\relax
+\DeclareMathOperator{\P}{\mathbb{P}}
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+% \DeclareMathOperator{\tr}{trace}
+\DeclareMathOperator{\card}{card}
+
+\DeclareMathOperator{\Convex}{Convex}
+\DeclareMathOperator{\plim}{plim}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\scalp}{\langle}{\rangle}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cF}{\mathcal{F}}
+
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\hb}{\hat{\beta}}
+\newcommand{\dPois}{\mathrm{Pois}}
+
+
+
+
+
+\begin{document}
+Цель этой заметки — объяснить, что находится в обратной матрице кросс-произведений $(X^TX)^{-1}$.
+
+Поехали! 
+
+Обозначим нашу матрицу $(X^TX)^{-1}$ как $V$. Она симметрична, $V^T = V$. 
+По определению, $X^TX \cdot V = I$.
+Разобьём произведение на две части по-другому, $X^T \cdot XV = I$.
+
+Заметим, что $X_* = XV$ — это матрица такого же размера, как $X$, $n\times k$. 
+Что же собой представляют эти звезданутые иксы, $X_*$?
+
+Во-первых, $X_* = XV$, поэтому новые $X_*$ — это линейные комбинации исходных $X$ с весами из матрицы $V = (X^TX)^{-1}$.
+Например, $x_{1*} = v_{11} x_1 + v_{21} x_2 + \dots + v_{k1} x_k$.
+
+Во-вторых, $X_*^T X_* = (X V)^T   X V = V^T X^TX V = V = (X^TX)^{-1}$. 
+Матрица кросс-произведений новых переменных является обратной к матрице кросс-произведений исходных переменных. 
+
+В частности, $v_{11} = x_{1*}^T x_{1*}$, а $v_{12} = v_{21} = x_{1*}^T x_{2*}$.
+
+Во-третьих, $XX_* = I$, то есть новая переменная $x_{i*}$ перпендикулярна всем старым переменным кроме $x_i$.
+Ортогональность позволяет нам взглянуть на первую звезданутую переменную как на остаток в регресии.
+Первая ничем не выделяется, просто индексов меньше будет.
+\[
+x_{1*} = v_{11} x_1 + v_{21} x_2 + \dots + v_{k1} x_k 
+\]
+Изолируем $x_1$ слева, а всё остальное — перенесём вправо:
+\[
+x_1 = -\frac{v_{21}}{v_{11}} x_2  -\frac{v_{31}}{v_{11}} x_3 - \dots -\frac{v_{k1}}{v_{11}} x_k + \frac{1}{v_{11}} x_{1*} 
+\]
+Мы только что заметили, что переменная $x_{1*}$ перпендикулярна $x_2$, $x_3$, \dots, $x_k$, поэтому перед нами регрессия $x_1$ на все остальные переменные $X_{-1}$:
+\[
+x_1 = \hb_{12} x_2 + \hb_{13} x_3 + \dots + \hb_{1k} x_k + e_1
+\]
+Здесь $e_1 = x_{1*} /v_{11}$ — это остаток от регрессии $x_1$ на $x_2$, \dots, $x_k$.
+И $\hb_{12} = -{v_{21}}/{v_{11}} = -{v_{12}}/{v_{11}}$ — это оценка коэффиента в регрессии $x_1$ перед переменной $x_2$.
+
+Отсюда мы сразу видим, что $V = (X^TX)^{-1}$ — это \textbf{матрица-мать всех регрессий!}
+Хочешь узнать коэффициент в регрессии $x_1$ на все остальные переменные перед $x_7$?
+В уме, $\hb_{17} = - v_{17} / v_{11}$.
+
+
+Найдём, чему равен $RSS_1$ в этой регрессии.
+\[
+RSS_1 = e_1^T e_1 = x_{1*}^T x_{1*} / v_{11}^2  = v_{11} / v_{11}^2 = 1  / v_{11}.
+\]
+
+Бинго! Ура, $v_{11} = 1/ RSS_1$. 
+Заметим, что $x_{1*} = e_1 v_{11} = e_1/RSS_1$.
+Типичный недиагональный элемент равен $v_{12} = -\hb_{12} v_{11} = -\hb_{12}/RSS_1$.
+И, наконец, матрицу-мать всех регрессий для $k=3$ в студию:
+\[
+V = (X^TX)^{-1} = \begin{pmatrix}
+    1/RSS_1 & -{\hb_{12}}/{RSS_1} & -{\hb_{13}}/{RSS_1}\\
+    - {\hb_{21}}/{RSS_2} & 1/RSS_2 & - {\hb_{23}}/{RSS_2} \\
+    - {\hb_{31}}/{RSS_3}  & - {\hb_{32}}/{RSS_3} & 1/RSS_3 \\
+\end{pmatrix} 
+\]
+Например, первая строка этой матрицы несёт всю информацию о регрессии $x_1$ на $x_2$ и $x_3$.
+
+В случае пары регрессоров вспомним, что $R^2$ одинаков в регрессии $x_1$ на $x_2$ и в обратной и равен $R^2 = \hb_{12} \hb_{21}$.
+Поэтому, $v_{12}^2 = v_{21}^2 = \hb_{12}\hb_{21} / (RSS_1 RSS_2) = R^2 / (RSS_1 RSS_2)$ и $V = (X^TX)^{-1}$ равна
+\[
+\begin{pmatrix}
+    1/RSS_1 & -{\hb_{12}}/{RSS_1} \\
+    - {\hb_{21}}/{RSS_2} & 1/RSS_2 \\
+\end{pmatrix}  = 
+\begin{pmatrix}
+    \frac{1}{RSS_1} & -\frac{\abs{R}}{\sqrt{RSS_1 RSS_2}} \\
+    -\frac{\abs{R}}{\sqrt{RSS_1 RSS_2}} & \frac{1}{RSS_2} \\
+\end{pmatrix} = 
+\frac{1}{1 - R^2}
+\begin{pmatrix}
+    \frac{1}{TSS_1} & -\frac{\abs{R}}{\sqrt{TSS_1 TSS_2}} \\
+    -\frac{\abs{R}}{TSS_1 TSS_2} & \frac{1}{TSS_2} \\
+\end{pmatrix}. 
+\]
+
+\end{document}
+
